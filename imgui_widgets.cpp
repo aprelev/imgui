@@ -5611,6 +5611,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
     // For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
     // This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
     const bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
+    const bool is_arrowless = (flags & ImGuiTreeNodeFlags_NoArrow) != 0;
     bool is_open = TreeNodeBehaviorIsOpen(id, flags);
     if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
         window->DC.TreeJumpToParentOnPopMask |= (1 << window->DC.TreeDepth);
@@ -5718,7 +5719,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         RenderNavHighlight(frame_bb, id, nav_highlight_flags);
         if (flags & ImGuiTreeNodeFlags_Bullet)
             RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.60f, text_pos.y + g.FontSize * 0.5f), text_col);
-        else if (!is_leaf)
+        else if (!is_leaf && !is_arrowless)
             RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Right, 1.0f);
         else // Leaf without bullet, left-adjusted text
             text_pos.x -= text_offset_x;
@@ -5749,7 +5750,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         }
         if (flags & ImGuiTreeNodeFlags_Bullet)
             RenderBullet(window->DrawList, ImVec2(text_pos.x - text_offset_x * 0.5f, text_pos.y + g.FontSize * 0.5f), text_col);
-        else if (!is_leaf)
+        else if (!is_leaf && !is_arrowless)
             RenderArrow(window->DrawList, ImVec2(text_pos.x - text_offset_x + padding.x, text_pos.y + g.FontSize * 0.15f), text_col, is_open ? ImGuiDir_Down : ImGuiDir_Right, 0.70f);
         if (g.LogEnabled)
             LogRenderedText(&text_pos, ">");
